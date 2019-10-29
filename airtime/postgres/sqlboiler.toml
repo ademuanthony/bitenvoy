@@ -1,0 +1,8 @@
+[psql]
+    dbname = "airtime"
+    host = "localhost"
+    user = "tony"
+    pass = "ojima123"
+    sslmode = "disable"
+    whitelist=["provider", "country",
+            "provider_country", "history"]

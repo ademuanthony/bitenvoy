@@ -1,0 +1,12 @@
+version: "2"
+services:
+  airtime:
+    build:
+      context: .
+      dockerfile: airtime/Dockerfile
+    restart: always
+    volumes:
+      - .:/go/src/github.com/ademuanthony/bitenvoy
+    container_name: airtime
+    ports:
+      - 8800:8081

@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package go.micro.srv.orders;
+
+service Orders {
+	rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse) {}
+	rpc MarkOrderAsPaid(MarkOrderAsPaidRequest) returns (EmptyMessage){}
+	rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {}
+	rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+}
+
+message EmptyMessage {
+
+}
+
+message PlaceOrderRequest {
+	string username = 1;
+	string product = 2;
+	double amount = 4;
+	map<string, string> details = 3;
+}
+
+message PlaceOrderResponse {
+	string order_id = 1;
+}
+
+message MarkOrderAsPaidRequest {
+	string order_id = 1;
+	string payment_method = 2;
+	double amount = 3;
+	map<string, string> payment_details = 4;
+}
+
+message GetOrdersRequest {
+	string username = 1;
+	string product = 2;
+	int32 skipCount = 3;
+	int32 maxResultCount = 4;
+}
+
+message GetOrdersResponse {
+	int64 totalCount = 1;
+	repeated Order orders = 2;
+}
+
+message Order {
+	string id = 1;
+	string username = 2;
+	string product = 3;
+	double amount = 4;
+	int64 date = 5;
+	map<string, string> details = 6;
+}
+
+message GetOrderRequest {
+	string order_id = 1;
+}
+
+message GetOrderResponse {
+	Order order = 1;
+}

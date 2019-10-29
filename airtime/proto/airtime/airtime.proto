@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package airtime;
+
+service Airtime {
+	rpc AddCountry(AddCountryRequest) returns (AddCountryResponse);
+	rpc Countries(GetCountriesRequest) returns (GetCountriesResponse);
+	rpc AddProvider(AddProviderRequest) returns (AddProviderResponse);
+	rpc Providers(ProvidersRequest) returns (ProvidersResponse);
+	rpc AddProviderToCountry(AddProviderToCountyRequest) returns (AddProviderToCountryResponse);
+	rpc SendAirtime(SendAirtimeRequest) returns (SendAirtimeResponse);
+	rpc History(HistoryRequest) returns (HistoryResponse);
+	rpc HistoryCount (HistoryCountRequest) returns (HistoryCountResponse);
+}
+
+message AddCountryRequest {
+	string id = 1;
+	string name = 2;
+}
+
+message AddCountryResponse {
+	string id = 1;
+}
+
+message GetCountriesRequest {
+
+}
+
+message GetCountriesResponse {
+	repeated Country countries = 1;
+}
+
+message Country {
+	string id = 1;
+	string name = 2;
+}
+
+message AddProviderRequest {
+	string name = 2;
+	string logo = 3;
+	ProviderStatus status = 4;
+	double price = 5;
+	double discount = 6;
+	string countryId = 7;
+}
+
+message AddProviderResponse {
+	string providerId = 1;
+	bool success = 2;
+}
+
+// ProvidersRequest is a request payload for getting providers from the service
+message ProvidersRequest {
+	string countryId = 1;
+	ProviderStatus status = 2;
+}
+// ProvidersResponse holds the list of Providers that is returned from the Providers endpoint
+message ProvidersResponse {
+	repeated Provider Providers = 1;
+}
+
+// Provider represent a network service provider like MTN, GLO, etc.
+message Provider {
+	string id = 1;
+	string countryId = 2;
+	string name = 3;
+	string logo = 4;
+	ProviderStatus status = 5;
+	double discount = 6;
+}
+
+// ProviderStatus specifies the status of a network provider
+enum ProviderStatus {
+    Unkwown = 0;
+    Active = 1;
+    Disabled = 2;
+}
+
+message SendAirtimeRequest {
+	string phoneNumber = 1;
+	string ProviderId = 2;
+	double value = 3;
+}
+
+message SendAirtimeResponse {
+	bool success = 1;
+	string message = 2;
+	string transactionId = 3;
+	double value = 4;
+}
+
+message AddProviderToCountyRequest {
+	string country_id = 1;
+	string provider_id = 2;
+}
+
+message AddProviderToCountryResponse {
+
+}
+
+// History
+message HistoryRequest {
+	int32 skipCount = 1;
+	int32 maxResultCount = 2;
+	string username = 3;
+}
+
+message History {
+	string username = 1;
+	string phone_number = 2;
+	string network = 3;
+	double amount = 4;
+	int64 date = 5;
+}
+
+message HistoryResponse {
+	int64 totalCount = 1;
+	repeated History histories = 2;
+}
+
+message HistoryCountRequest {
+	string username = 1;
+}
+
+message HistoryCountResponse {
+	int64 count = 1;
+}
