@@ -11,6 +11,11 @@ service Airtime {
 	rpc SendAirtime(SendAirtimeRequest) returns (SendAirtimeResponse);
 	rpc History(HistoryRequest) returns (HistoryResponse);
 	rpc HistoryCount (HistoryCountRequest) returns (HistoryCountResponse);
+	rpc OrderAttributes(EmptyMessage) returns (OrderAttributesResponse);
+}
+
+message EmptyMessage {
+
 }
 
 message AddCountryRequest {
@@ -124,4 +129,9 @@ message HistoryCountRequest {
 
 message HistoryCountResponse {
 	int64 count = 1;
+}
+
+//order attributes
+message OrderAttributesResponse {
+	repeated string attributes = 1;
 }

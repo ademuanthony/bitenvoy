@@ -38,6 +38,7 @@ type OrdersService interface {
 	MarkOrderAsPaid(ctx context.Context, in *MarkOrderAsPaidRequest, opts ...client.CallOption) (*EmptyMessage, error)
 	GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...client.CallOption) (*GetOrdersResponse, error)
 	GetOrder(ctx context.Context, in *GetOrderRequest, opts ...client.CallOption) (*GetOrderResponse, error)
+	ChangeStatus(ctx context.Context, in *ChangeStatusRequest, opts ...client.CallOption) (*EmptyMessage, error)
 }
 
 type ordersService struct {
@@ -98,6 +99,16 @@ func (c *ordersService) GetOrder(ctx context.Context, in *GetOrderRequest, opts 
 	return out, nil
 }
 
+func (c *ordersService) ChangeStatus(ctx context.Context, in *ChangeStatusRequest, opts ...client.CallOption) (*EmptyMessage, error) {
+	req := c.c.NewRequest(c.name, "Orders.ChangeStatus", in)
+	out := new(EmptyMessage)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Orders service
 
 type OrdersHandler interface {
@@ -105,6 +116,7 @@ type OrdersHandler interface {
 	MarkOrderAsPaid(context.Context, *MarkOrderAsPaidRequest, *EmptyMessage) error
 	GetOrders(context.Context, *GetOrdersRequest, *GetOrdersResponse) error
 	GetOrder(context.Context, *GetOrderRequest, *GetOrderResponse) error
+	ChangeStatus(context.Context, *ChangeStatusRequest, *EmptyMessage) error
 }
 
 func RegisterOrdersHandler(s server.Server, hdlr OrdersHandler, opts ...server.HandlerOption) error {
@@ -113,6 +125,7 @@ func RegisterOrdersHandler(s server.Server, hdlr OrdersHandler, opts ...server.H
 		MarkOrderAsPaid(ctx context.Context, in *MarkOrderAsPaidRequest, out *EmptyMessage) error
 		GetOrders(ctx context.Context, in *GetOrdersRequest, out *GetOrdersResponse) error
 		GetOrder(ctx context.Context, in *GetOrderRequest, out *GetOrderResponse) error
+		ChangeStatus(ctx context.Context, in *ChangeStatusRequest, out *EmptyMessage) error
 	}
 	type Orders struct {
 		orders
@@ -139,4 +152,8 @@ func (h *ordersHandler) GetOrders(ctx context.Context, in *GetOrdersRequest, out
 
 func (h *ordersHandler) GetOrder(ctx context.Context, in *GetOrderRequest, out *GetOrderResponse) error {
 	return h.OrdersHandler.GetOrder(ctx, in, out)
+}
+
+func (h *ordersHandler) ChangeStatus(ctx context.Context, in *ChangeStatusRequest, out *EmptyMessage) error {
+	return h.OrdersHandler.ChangeStatus(ctx, in, out)
 }

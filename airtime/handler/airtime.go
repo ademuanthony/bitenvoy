@@ -22,6 +22,12 @@ type airtimeHandler struct{
 	store DataStore
 }
 
+func (a airtimeHandler) OrderAttributes(_ context.Context, _ *airtime.EmptyMessage, resp *airtime.OrderAttributesResponse) error {
+	resp.Attributes = append(resp.Attributes, "phone_number", "provider_id")
+
+	return nil
+}
+
 func NewAirtime(store DataStore) *airtimeHandler {
 	return &airtimeHandler{
 		store: store,
@@ -101,7 +107,7 @@ func (a airtimeHandler) History(ctx context.Context, req *airtime.HistoryRequest
 }
 
 func (a airtimeHandler) HistoryCount(ctx context.Context, req *airtime.HistoryCountRequest, resp *airtime.HistoryCountResponse) error {
-	count, err := a.store.HistoryCount()
+	count, err := a.store.HistoryCount(ctx, req.Username)
 	resp.Count = count
 	return err
 }

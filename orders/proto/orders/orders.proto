@@ -7,6 +7,7 @@ service Orders {
 	rpc MarkOrderAsPaid(MarkOrderAsPaidRequest) returns (EmptyMessage){}
 	rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {}
 	rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+	rpc ChangeStatus(ChangeStatusRequest) returns (EmptyMessage) {}
 }
 
 message EmptyMessage {
@@ -50,6 +51,17 @@ message Order {
 	double amount = 4;
 	int64 date = 5;
 	map<string, string> details = 6;
+	OrderStatus status = 7;
+}
+
+enum OrderStatus {
+	AwaitingPayment = 0;
+	NoPayment = 1;
+	Cancelled = 2;
+	PaymentReceived = 3;
+	UnderPaid = 4;
+	ErrorSendingValue = 5;
+	Completed = 6;
 }
 
 message GetOrderRequest {
@@ -58,4 +70,9 @@ message GetOrderRequest {
 
 message GetOrderResponse {
 	Order order = 1;
+}
+
+message ChangeStatusRequest {
+	string order_id = 1;
+	OrderStatus status = 2;
 }

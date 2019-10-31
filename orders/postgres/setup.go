@@ -7,14 +7,21 @@ import (
 )
 
 const (
-	createOrderTable = `CREATE TABLE IF NOT EXISTS order (
+	createOrderTable = `CREATE TABLE IF NOT EXISTS order_model (
 		id VARCHAR(64) NOT NULL PRIMARY KEY,
 		username VARCHAR(64) NOT NULL,
 		product VARCHAR(265) NOT NULL,
+		status VARCHAR(265) NOT NULL,
 		details TEXT NOT NULL,
 		date INT NOT NULL,
 		amount FLOAT8 NOT NULL);`
 
+	createOrderStatusTable = `CREATE TABLE IF NOT EXISTS order_status (
+		id VARCHAR(64) NOT NULL PRIMARY KEY,
+		order_id VARCHAR(64) NOT NULL,
+		status VARCHAR(265) NOT NULL,
+		date INT NOT NULL
+		)`
 )
 
 func (pg *PgDb) CreateOrderTable() error {
@@ -25,6 +32,17 @@ func (pg *PgDb) CreateOrderTable() error {
 
 func (pg *PgDb) OrderTableExists() bool {
 	exists, _ := pg.tableExists("order")
+	return exists
+}
+
+func (pg *PgDb) CreateOrderHistoryTable() error {
+	log.Trace("Creating order table")
+	_, err := pg.db.Exec(createOrderStatusTable)
+	return err
+}
+
+func (pg *PgDb) OrderHistoryTableExists() bool {
+	exists, _ := pg.tableExists("order_status")
 	return exists
 }
 
@@ -42,18 +60,13 @@ func (pg *PgDb) tableExists(name string) (bool, error) {
 }
 
 func (pg *PgDb) DropAllTables() error {
-	if err := pg.dropIndex("provider_country"); err != nil {
+	if err := pg.dropIndex("order_status"); err != nil {
 		return err
 	}
 
-	if err := pg.dropIndex("provider"); err != nil {
+	if err := pg.dropIndex("order"); err != nil {
 		return err
 	}
-
-	if err := pg.dropIndex("country"); err != nil {
-		return err
-	}
-
 
 	return nil
 }

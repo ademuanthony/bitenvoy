@@ -4,4 +4,4 @@
     user = "tony"
     pass = "ojima123"
     sslmode = "disable"
-    whitelist=["order"]
+    whitelist=["order_model", "order_status"]

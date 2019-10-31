@@ -42,6 +42,7 @@ type AirtimeService interface {
 	SendAirtime(ctx context.Context, in *SendAirtimeRequest, opts ...client.CallOption) (*SendAirtimeResponse, error)
 	History(ctx context.Context, in *HistoryRequest, opts ...client.CallOption) (*HistoryResponse, error)
 	HistoryCount(ctx context.Context, in *HistoryCountRequest, opts ...client.CallOption) (*HistoryCountResponse, error)
+	OrderAttributes(ctx context.Context, in *EmptyMessage, opts ...client.CallOption) (*OrderAttributesResponse, error)
 }
 
 type airtimeService struct {
@@ -123,7 +124,7 @@ func (c *airtimeService) SendAirtime(ctx context.Context, in *SendAirtimeRequest
 }
 
 func (c *airtimeService) History(ctx context.Context, in *HistoryRequest, opts ...client.CallOption) (*HistoryResponse, error) {
-	req := c.c.NewRequest(c.name, "Airtime.Histories", in)
+	req := c.c.NewRequest(c.name, "Airtime.History", in)
 	out := new(HistoryResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -142,6 +143,16 @@ func (c *airtimeService) HistoryCount(ctx context.Context, in *HistoryCountReque
 	return out, nil
 }
 
+func (c *airtimeService) OrderAttributes(ctx context.Context, in *EmptyMessage, opts ...client.CallOption) (*OrderAttributesResponse, error) {
+	req := c.c.NewRequest(c.name, "Airtime.OrderAttributes", in)
+	out := new(OrderAttributesResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Airtime service
 
 type AirtimeHandler interface {
@@ -153,6 +164,7 @@ type AirtimeHandler interface {
 	SendAirtime(context.Context, *SendAirtimeRequest, *SendAirtimeResponse) error
 	History(context.Context, *HistoryRequest, *HistoryResponse) error
 	HistoryCount(context.Context, *HistoryCountRequest, *HistoryCountResponse) error
+	OrderAttributes(context.Context, *EmptyMessage, *OrderAttributesResponse) error
 }
 
 func RegisterAirtimeHandler(s server.Server, hdlr AirtimeHandler, opts ...server.HandlerOption) error {
@@ -165,6 +177,7 @@ func RegisterAirtimeHandler(s server.Server, hdlr AirtimeHandler, opts ...server
 		SendAirtime(ctx context.Context, in *SendAirtimeRequest, out *SendAirtimeResponse) error
 		History(ctx context.Context, in *HistoryRequest, out *HistoryResponse) error
 		HistoryCount(ctx context.Context, in *HistoryCountRequest, out *HistoryCountResponse) error
+		OrderAttributes(ctx context.Context, in *EmptyMessage, out *OrderAttributesResponse) error
 	}
 	type Airtime struct {
 		airtime
@@ -207,4 +220,8 @@ func (h *airtimeHandler) History(ctx context.Context, in *HistoryRequest, out *H
 
 func (h *airtimeHandler) HistoryCount(ctx context.Context, in *HistoryCountRequest, out *HistoryCountResponse) error {
 	return h.AirtimeHandler.HistoryCount(ctx, in, out)
+}
+
+func (h *airtimeHandler) OrderAttributes(ctx context.Context, in *EmptyMessage, out *OrderAttributesResponse) error {
+	return h.AirtimeHandler.OrderAttributes(ctx, in, out)
 }

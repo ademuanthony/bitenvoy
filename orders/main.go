@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ademuanthony/bitenvoy/airtime/proto/airtime"
 	"github.com/ademuanthony/bitenvoy/orders/handler"
 	"os"
 
@@ -29,9 +30,22 @@ func main() {
 		}
 	}()
 
+	if cfg.Reset {
+		if err = db.DropAllTables(); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+
 	// create tables
 	if !db.OrderTableExists() {
 		if err = db.CreateOrderTable(); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if !db.OrderHistoryTableExists() {
+		if err = db.CreateOrderHistoryTable(); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -45,8 +59,9 @@ func main() {
 	// Initialise service
 	service.Init()
 
+	airtimeService := airtime.NewAirtimeService("go.micro.srv.airtime", nil)
 	// Register Handler
-	if err := orders.RegisterOrdersHandler(service.Server(), handler.NewOrderHandler(db)); err != nil {
+	if err := orders.RegisterOrdersHandler(service.Server(), handler.NewOrderHandler(db, airtimeService)); err != nil {
 		log.Fatal(err)
 	}
 
@@ -56,8 +71,7 @@ func main() {
 	}
 }
 const (
-	DefaultConfigFilename      = "airtime.conf"
-	Hint                       = `Run dcrextdata < --http > to start http server or dcrextdata < --help > for help.`
+	DefaultConfigFilename      = "orders.conf"
 	defaultDbHost              = "localhost"
 	defaultDbPort              = "5432"
 	defaultDbUser              = "postgres"
@@ -82,6 +96,7 @@ func defaultConfig() Config {
 type Config struct {
 	DebugLevel string `short:"d" long:"debuglevel" description:"Logging level {trace, debug, info, warn, error, critical}"`
 	Quiet      bool   `short:"q" long:"quiet" description:"Easy way to set debuglevel to error"`
+	Reset 	   bool	  `short:"r" long:"reset" description:"Remove and recreate all tables"`
 
 	// Postgresql Configuration
 	DBHost string `long:"dbhost" description:"Database host"`
