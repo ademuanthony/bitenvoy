@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package go.micro.srv.payments;
+
+service Payment {
+	rpc PaymentMethods(EmptyMessage) returns (PaymentMethodsResponse) {}
+	rpc InitPayment(InitPaymentRequest) returns (InitPaymentResponse) {}
+	rpc CheckStatus(CheckStatusRequest) returns (CheckStatusResponse) {}
+	rpc PaymentHistory(PaymentHistoryRequest) returns (PaymentHistoryResponse)
+}
+
+message EmptyMessage {
+
+}
+
+message PaymentMethodsResponse {
+	repeated string methods = 1;
+}
+
+message InitPaymentRequest {
+	string order_id = 1;
+	double amount = 2;
+	string method = 3;
+	string username = 4;
+}
+
+message InitPaymentResponse {
+	string payment_id = 1;
+	string address = 2;
+}
+
+message CheckStatusRequest {
+	string payment_id = 1;
+}
+
+message CheckStatusResponse {
+	PaymentStatus status = 1;
+}
+
+enum PaymentStatus {
+	Unknown = 0;
+	Waiting = 1;
+	Received = 2;
+	UnderPaid = 3;
+	TimedOut = 4;
+}
+
+message PaymentHistoryRequest {
+	PaymentStatus status = 1;
+	string username = 2;
+	int32 skipCount = 3;
+	int32 maxResultCount = 4;
+}
+
+message PaymentHistoryResponse {
+	int64 totalCount = 1;
+	repeated Payment payments = 2;
+}
+
+message Payment {
+	string id = 1;
+	string order_id = 2;
+	double amount = 3;
+	string method = 4;
+	string username = 5;
+	PaymentStatus status = 6;
+	int64 date = 7;
+}

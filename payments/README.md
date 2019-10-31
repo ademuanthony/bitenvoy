@@ -1,11 +1,11 @@
-# Payment Service
+# Payments Service
 
-This is the Payment service
+This is the Payments service
 
 Generated with
 
 ```
-micro new github.com/ademuanthony/bitenvoy/payment --namespace=go.micro --type=srv
+micro new github.com/ademuanthony/bitenvoy/payments --namespace=go.micro --type=srv
 ```
 
 ## Getting Started
@@ -16,9 +16,9 @@ micro new github.com/ademuanthony/bitenvoy/payment --namespace=go.micro --type=s
 
 ## Configuration
 
-- FQDN: go.micro.srv.payment
+- FQDN: go.micro.srv.payments
 - Type: srv
-- Alias: payment
+- Alias: payments
 
 ## Dependencies
 
@@ -46,7 +46,7 @@ make build
 
 Run the service
 ```
-./payment-srv
+./payments-srv
 ```
 
 Build a docker image
